@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metal Reaction Crafting Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        #game-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .element {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: white;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: grab;
+        }
+        #reaction-result {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Industrial Metal Reaction Game</h1>
+    <p>Drag and combine elements to see reactions!</p>
+    
+    <div id="game-container">
+        <div class="element" draggable="true" id="iron">Fe</div>
+        <div class="element" draggable="true" id="oxygen">O₂</div>
+        <div class="element" draggable="true" id="water">H₂O</div>
+        <div class="element" draggable="true" id="aluminum">Al</div>
+        <div class="element" draggable="true" id="copper">Cu</div>
+        <div class="element" draggable="true" id="co2">CO₂</div>
+    </div>
+    
+    <div id="reaction-result">Drop elements here to combine!</div>
+    
+    <script>
+        const reactions = {
+            "Fe+O₂+H₂O": "Rust Formation: 4Fe + 3O₂ + 6H₂O → 4Fe(OH)₃",
+            "Fe₂O₃+Al": "Thermite Reaction: Fe₂O₃ + 2Al → 2Fe + Al₂O₃",
+            "Cu+CO₂+O₂+H₂O": "Copper Patina: 2Cu + CO₂ + O₂ + H₂O → Cu₂(OH)₂CO₃"
+        };
+
+        let selectedElements = [];
+        const elements = document.querySelectorAll(".element");
+        const resultDiv = document.getElementById("reaction-result");
+
+        elements.forEach(element => {
+            element.addEventListener("dragstart", (e) => {
+                e.dataTransfer.setData("text", e.target.id);
+            });
+        });
+
+        document.body.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        document.body.addEventListener("drop", (e) => {
+            e.preventDefault();
+            const elementId = e.dataTransfer.getData("text");
+            if (!selectedElements.includes(elementId)) {
+                selectedElements.push(elementId);
+            }
+            checkReaction();
+        });
+
+        function checkReaction() {
+            const sortedElements = selectedElements.sort().join("+");
+            if (reactions[sortedElements]) {
+                resultDiv.innerHTML = reactions[sortedElements];
+                selectedElements = []; // Reset after reaction
+            } else {
+                resultDiv.innerHTML = "No reaction. Try different combinations!";
+            }
+        }
+    </script>
+</body>
+</html>
